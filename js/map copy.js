@@ -51,19 +51,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function applyFilters() {
-        // اگر گزینه "هیچ‌کدام" انتخاب شده باشد، هیچ مدرسه‌ای نمایش داده نشود
-        if (activeFilters.selectedZone === "none") {
-            addMarkers([]); // لیست خالی برای پاک‌کردن مارکرها
-            return;
-        }
-    
         let filtered = [...allSchools];
-    
+
         // فیلتر ناحیه
         if (activeFilters.selectedZone) {
             filtered = filtered.filter(s => s.district === activeFilters.selectedZone);
         }
-    
+
         // فیلتر رشته
         if (activeFilters.selectedCourse) {
             filtered = filtered.filter(s =>
@@ -71,14 +65,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 s.cources.split(",").map(c => c.trim()).includes(activeFilters.selectedCourse)
             );
         }
-    
+
         // فیلتر بر اساس کدها
         filtered = filtered.filter(s =>
             (activeFilters.gender_specific_code.length === 0 || activeFilters.gender_specific_code.includes(s.gender_specific_code)) &&
             (activeFilters.technical_or_vocational_code.length === 0 || activeFilters.technical_or_vocational_code.includes(s.technical_or_vocational_code)) &&
             (activeFilters.public_or_private_code.length === 0 || activeFilters.public_or_private_code.includes(s.public_or_private_code))
         );
-    
+
         // جستجوی فازی
         const query = activeFilters.searchText.trim().toLowerCase();
         if (query) {
@@ -88,10 +82,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 fuzzyMatch(s.address || "", query)
             );
         }
-    
+
         addMarkers(filtered);
     }
-    
+
     // Load schools + course mappings
     // مرحله 1: خواندن لیست فایل‌های مدرسه
     fetch("js/SchoolFilesIndex.json")
@@ -209,40 +203,22 @@ fetch("js/zonesRange.json")
 
     // Load zone dropdown
     fetch("js/zones.json")
-    .then(res => res.json())
-    .then(zones => {
-        const zoneSelect = document.getElementById("zoneSelect");
+        .then(res => res.json())
+        .then(zones => {
+            const zoneSelect = document.getElementById("zoneSelect");
+            zoneSelect.innerHTML = `<option value="0" selected>تمامی نواحی</option>`;
+            zones.forEach(zone => {
+                const option = document.createElement("option");
+                option.value = zone.id;
+                option.textContent = zone.name;
+                zoneSelect.appendChild(option);
+            });
 
-        // اضافه کردن گزینه‌های پیش‌فرض
-        zoneSelect.innerHTML = `
-            <option value="0" selected>تمامی نواحی</option>
-            <option value="none">هیچ‌کدام</option>
-        `;
-
-        // افزودن بقیه نواحی از فایل JSON
-        zones.forEach(zone => {
-            const option = document.createElement("option");
-            option.value = zone.id;
-            option.textContent = zone.name;
-            zoneSelect.appendChild(option);
+            zoneSelect.addEventListener("change", function () {
+                activeFilters.selectedZone = this.value === "0" ? null : this.value;
+                applyFilters();
+            });
         });
-
-        // رویداد تغییر ناحیه
-        zoneSelect.addEventListener("change", function () {
-            const selectedValue = this.value;
-
-            if (selectedValue === "0") {
-                activeFilters.selectedZone = null; // همه نواحی
-            } else if (selectedValue === "none") {
-                activeFilters.selectedZone = "none"; // هیچ‌کدام
-            } else {
-                activeFilters.selectedZone = selectedValue;
-            }
-
-            applyFilters();
-        });
-    });
-
 
     // دکمه‌های فیلتر
     document.querySelectorAll(".filter-btn").forEach(button => {
@@ -266,9 +242,87 @@ fetch("js/zonesRange.json")
         else arr.splice(i, 1);
     }
 
-   
+    // جستجو زنده
+    document.getElementById("search").addEventListener("input", function () {
+        activeFilters.searchText = this.value.trim();
+        applyFilters();
+    });
+
+
+    // map.on("click", function (e) {
+    //     const lat = e.latlng.lat.toFixed(6);
+    //     const lng = e.latlng.lng.toFixed(6);
+    //     const coords = `${lat}, ${lng}`;
     
-    let clickedPoints = []; // ✅ اضافه شده
+    //     navigator.clipboard.writeText(coords)
+    //         .then(() => {
+    //             alert(`مختصات ${coords} کپی شد!`);
+    //         })
+    //         .catch(err => {
+    //             console.error("خطا در کپی کردن:", err);
+    //         });
+    // });
+    
+
+    // map.on("click", function (e) {
+    //     const lat = e.latlng.lat.toFixed(12);
+    //     const lng = e.latlng.lng.toFixed(12);
+    //     const coords = `${lat}, ${lng}`;
+    
+    //     let clickedInZone = false;
+    
+    //     for (const polygon of zonePolygons) {
+    //         if (polygon.getBounds().contains(e.latlng)) {
+    //             clickedInZone = true;
+    //             break;
+    //         }
+    //     }
+    
+    //     // بدون نمایش عنوان ناحیه، فقط مختصات کپی شود
+    //     navigator.clipboard.writeText(coords)
+    //         .then(() => {
+    //             alert(`📌 مختصات ${coords} با موفقیت کپی شد.`);
+    //         })
+    //         .catch(err => {
+    //             console.error("❌ خطا در کپی کردن مختصات:", err);
+    //         });
+    // });
+    // let clickedPoints = [];
+    // let polyline = null;
+    
+    // map.on("click", function (e) {
+    //     const lat = +e.latlng.lat.toFixed(12);
+    //     const lng = +e.latlng.lng.toFixed(12);
+    //     const coords = [lat, lng];
+    //     const coordText = `${lat}, ${lng}`;
+    
+    //     // افزودن مختصات جدید به لیست مسیر
+    //     clickedPoints.push(coords);
+    
+    //     // نقطه سبز جدید در محل کلیک
+    //     L.circleMarker(coords, {
+    //         radius: 6,
+    //         color: "green",
+    //         fillColor: "green",
+    //         fillOpacity: 1
+    //     }).addTo(map);
+    
+    //     // رسم مسیر بین نقاط کلیک‌شده
+    //     if (polyline) {
+    //         map.removeLayer(polyline); // حذف مسیر قبلی
+    //     }
+    //     polyline = L.polyline(clickedPoints, {
+    //         color: "green",
+    //         weight: 3
+    //     }).addTo(map);
+    
+    //     // کپی به کلیپ‌بورد
+    //     navigator.clipboard.writeText(coordText)
+    //         .then(() => console.log(`مختصات کپی شد: ${coordText}`))
+    //         .catch(err => console.error("خطا در کپی:", err));
+    // });
+    
+    let clickedPoints = [];
 
     map.on("click", function (e) {
         const lat = +e.latlng.lat.toFixed(12);
@@ -276,81 +330,25 @@ fetch("js/zonesRange.json")
         const coords = [lat, lng];
         const coordText = `${lat}, ${lng}`;
     
-        clickedPoints.push(coords); // ✅ بدون خطا
+        // ذخیره نقطه در آرایه (اختیاری اگر بعداً نیاز دارید)
+        clickedPoints.push(coords);
     
-        // نمایش نقطه روی نقشه
+        // نمایش نقطه با رنگ قرمز روشن
         L.circleMarker(coords, {
             radius: 6,
-            color: "#ff4d4d",
-            fillColor: "#ff9999",
+            color: "#ff4d4d",         // خط دور قرمز روشن
+            fillColor: "#ff9999",     // داخل قرمز روشن‌تر
             fillOpacity: 1
         }).addTo(map);
     
-        // کپی به کلیپ‌بورد
+        // کپی مختصات به کلیپ‌بورد
         navigator.clipboard.writeText(coordText)
             .then(() => {
-                console.log(`مختصات کپی شد: ${coordText}`);
-               
+                console.log(`📌 مختصات کپی شد: ${coordText}`);
             })
             .catch(err => {
-                console.error("خطا در کپی:", err);
-                
+                console.error("❌ خطا در کپی:", err);
             });
     });
-    
-
-
-document.getElementById("addressSearchBtn").addEventListener("click", function () {
-    const query = document.getElementById("addressInput").value.trim();
-    if (!query) return;
-
-    // تابع برای جستجو آدرس با مکان پایه
-    function searchWithLocation(baseLocation) {
-        const fullQuery = baseLocation ? `${query}, ${baseLocation}` : query;
-
-        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullQuery)}&accept-language=fa`)
-            .then(res => res.json())
-            .then(results => {
-                if (results.length > 0) {
-                    const place = results[0];
-                    const lat = parseFloat(place.lat);
-                    const lon = parseFloat(place.lon);
-
-                    map.setView([lat, lon], 17);
-                    L.marker([lat, lon]).addTo(map)
-                        .bindPopup(`<b>${place.display_name}</b>`).openPopup();
-                } else {
-                    alert("آدرسی یافت نشد.");
-                }
-            })
-            .catch(err => {
-                console.error("خطا در جستجو:", err);
-                alert("مشکلی در انجام جستجو پیش آمد.");
-            });
-    }
-
-    // ابتدا تلاش برای دریافت مکان کاربر
-    if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(
-            position => {
-                const userLat = position.coords.latitude.toFixed(6);
-                const userLon = position.coords.longitude.toFixed(6);
-                searchWithLocation(`${userLat}, ${userLon}`);
-            },
-            error => {
-                // در صورت عدم موفقیت، جستجو با مشهد
-                console.warn("مکان‌یابی فعال نیست، جستجو با مشهد انجام می‌شود.");
-                searchWithLocation("مشهد");
-            },
-            { timeout: 5000 }
-        );
-    } else {
-        // مرورگر از geolocation پشتیبانی نمی‌کند
-        console.warn("Geolocation در مرورگر پشتیبانی نمی‌شود.");
-        searchWithLocation("مشهد");
-    }
+        
 });
-
-
-});
-
