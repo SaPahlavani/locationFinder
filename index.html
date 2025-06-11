@@ -1,90 +1,29 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>هنرستان نما خراسان رضوی</title>
+    <title>هنرستان‌یاب خراسان رضوی</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="css/style.css">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
-<body>
+<body dir="rtl">
+    <!--menu-->
     <header>
-        <div class="logo">
-            <p>هنرستان نما</p>
-        </div>
-        <div class="font-size-control">
-            <span class="font-size-label">اندازه متن:</span>
-            <div class="font-size-buttons">
-                <button id="decrease-font" class="font-btn" title="کوچک کردن متن">
-                    <span class="font-icon">A</span>
-                </button>
-                <button id="increase-font" class="font-btn" title="بزرگ کردن متن">
-                    <span class="font-icon">A</span>
-                </button>
-            </div>
-            <span class="font-size-label map-zoom-label">بزرگنمایی نقشه:</span>
-            <div class="font-size-buttons">
-                <button id="map-zoom-out" class="font-btn" title="کوچک‌نمایی نقشه">
-                    <span class="font-icon">-</span>
-                </button>
-                <button id="map-zoom-in" class="font-btn" title="بزرگنمایی نقشه">
-                    <span class="font-icon">+</span>
-                </button>
-            </div>
-            <span class="font-size-label map-zoom-label">نمای کلی:</span>
-            <div class="font-size-buttons">
-                <button id="birds-eye-view" class="font-btn" title="نمای از بالا">
-                    <span class="font-icon">⌂</span>
-                </button>
-            </div>
-        </div>
+       
+       
     </header>
-    <section>
-        <div class="container-map">
-            <div id="map" class="map"></div>
-            <div id="filters" class="hidden">
-                <input type="text" id="searchInput" class="filter-dropdown" placeholder="جستجو در نام و آدرس">
-                <select id="zoneSelect" class="filter-dropdown">
-                    <option value="0" selected>تمامی نواحی</option>
-                </select>
-                <select id="courseSelect" class="filter-dropdown">
-                    <option selected disabled>انتخاب رشته</option>
-                </select>
-                <button class="filter-btn" data-filter="G1">دخترانه</button>
-                <button class="filter-btn" data-filter="G0">پسرانه</button>
-                <button class="filter-btn" data-filter="T1">فنی و حرفه‌ای</button>
-                <button class="filter-btn" data-filter="T0">کاردانش</button>
-                <button class="filter-btn" data-filter="P1">دولتی</button>
-                <button class="filter-btn" data-filter="P0">غیردولتی</button>
-            </div>
-            <button id="credits-btn" class="credits-btn">درباره سازندگان</button>
-            <div class="copyright">
-                تمامی حقوق این سایت متعلق به<br>
-                اداره آموزش دوره دوم متوسطه فنی و حرفه ای و کاردانش استان خراسان رضوی می‌باشد.
-            </div>
 
+    <!--background-->
+    <section id="background-img">
+        <div class="options">
+           <a href="map.html"> <h1>بهترین هنرستان‌های استان خراسان رضوی را پیدا کنید!</h1></a>
         </div>
     </section>
 
-    <!-- Credits Modal -->
-    <div id="credits-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h3>سازندگان</h3>
-            <p>خانم مهندس سمانه پهلوانی</p>
-            <p>خانم مهندس فاطمه شامحمدی</p>
-            <p>خانم مهندس جمیله کاشانی فر</p>
-            <p class="school-name">به سفارش</p>
-            <p class="school-name">اداره آموزش دوره دوم متوسطه فنی و حرفه ای و کاردانش استان خراسان رضوی</p>
-            <p class="school-name">خرداد 1404</p>
-
-        </div>
-    </div>
-
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="js/map.js"></script>
+    <script src="js/script.js"></script>
+
 </body>
-</html> 
+</html>

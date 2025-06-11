@@ -1,175 +1,158 @@
 @font-face {
   font-family: yekan;
-  src: url(../fonts/Yekan.woff2) format('woff2');
-  font-display: swap;
+  src: url(../fonts/Yekan.woff2);
 }
-
-/* استایل‌های پایه */
-:root {
-  --font-scale: 1;
-  --min-font-scale: 0.5;
-  --max-font-scale: 1.5;
-}
-
-body.font-small {
-  --font-scale: var(--min-font-scale);
-}
-
-body.font-large {
-  --font-scale: 1.2;
-}
-
-body.font-larger {
-  --font-scale: var(--max-font-scale);
-}
-
-*, *::before, *::after {
-  font-family: yekan, Tahoma, Arial;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-body, html {
+body, html{
   margin: 0;
   padding: 0;
   /* overflow-x: hidden; */
   scroll-behavior: smooth;
-  font-family: yekan, Tahoma, Arial;
-  direction: rtl;
+  font-family: yekan;
 }
 
-header {
-  width: 100%;
-  height: 40px;
+header{
+width: 100%;
+height: fit-content;
+display: flex;
+align-items: center;
+}
+.logo {
+  /* margin: 20px auto 0 30px; */
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.9);
-  position: fixed;
-  top: 0;
-  z-index: 1000;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  flex-basis: 30%;
+  width: 150px;
 }
-
-.logo {
-  padding: 0 15px;
+.logo-desktop {
+align-items: center;
+flex-basis: 10%;
+width: 150px;
+display: none;
 }
-
+.navbar-desktop{
+display: none;
+}
 .logo p {
-  font-size: 20px;
-  font-weight: bold;
-  margin: 0;
-  color: #333;
+font-family: yekan;
+font-weight: bold;
+font-size: 20px;
 }
-
 .logo img {
-  width: 30%;
-  height: 50%;
+width: 30%;
+height: 50%;
 }
-
+.label-hamberger{
+font-size: 1.5rem;
+}
+.hamberger{
+align-self: center;
+flex-basis: 70%;
+margin-right: 1rem;
+}
+.container-header-mobile{
+/* z-index: 401; */
+}
 .leaflet-control-attribution {
-  display: none !important;
-}
-/*******/
-.leaflet-popup-content {
-  direction: rtl;
-  text-align: right;
-  font-size: calc(16px * var(--font-scale));
-  line-height: 2;
-  color: #585858;
+display: none !important;
 }
 
-.leaflet-popup-content b {
-  font-size: calc(18px * var(--font-scale));
-  font-weight: 700;
+.container-navbar-mobile{
+display: flex;
 }
-
-.leaflet-popup-content-wrapper {
-  background-color: #f2f1f1;
-  border: 1px solid #585858;
-  border-radius: 10px;
+.container-header-desktop{
+display: none;
 }
-
-.leaflet-popup-tip {
-  background: #f2f1f1;
-  border: 1px solid #585858;
-  border-radius: 2px;
+.header-mobile{
+display: flex;
 }
-
-.leaflet-popup-close-button {
-    font-size: 24px !important;
-    width: 30px !important;
-    height: 30px !important;
-    padding: 4px !important;
-    color: #666 !important;
-    font-weight: bold !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    transition: color 0.2s !important;
+.nav {
+margin: 17px 30px 0;
+position: relative;
+width: 580px;
+height: 50px;
+background-color: #ffffff;
+border-radius: 8px;
+font-size: 0;
 }
-
-.leaflet-popup-close-button:hover {
-    color: #333 !important;
-    background: rgba(0, 0, 0, 0.05) !important;
-    text-decoration: none !important;
+.navber-mobile{
+background-color: #cecece;
+flex-direction: column;
+display: flex;
+position: absolute;
+right: 0;
+z-index: 1;
+align-items: flex-start;
 }
-
-.container-map {
-  margin-top: 40px;
+.close{
+align-self: end;
+padding-left: 1rem;
 }
+.navbar-mobile-link{
+text-align: right;
+padding: 0 1rem;
+}
+.d-none{
+display: none;
+}
+#checkbox-hamberger:checked .container-navbar-mobile{
+display: block;
+}
+#filters {
+position: absolute;
+top: 10px;
+right: 10px;
+/* background: rgba(255, 255, 255, 0.9); */
+padding: 10px;
+/* border-radius: 10px;
+box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); */
+display: flex;
+flex-direction: row;
+gap: 8px;
+z-index: 400;
+flex-wrap: wrap;
 
+}
 .filter-btn {
-  flex: 0 0 auto;
-  background: rgba(255, 255, 255, 0.4);
-  color: #000000;
-  border: 1px solid rgba(137, 135, 135, 0.3);
-  padding: 8px 16px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 16px;
-  text-align: center;
-  font-family: yekan, Tahoma, Arial;
-  font-weight: 500;
-  white-space: nowrap;
+background: white;
+border: 2px solid #ccc;
+padding: 6px 12px;
+border-radius: 20px;
+cursor: pointer;
+font-size: 14px;
+text-align: right;
+font-family: inherit;
 }
 
 .filter-btn:hover {
-  background: rgba(224, 224, 224, 0.6);
+background: #cecece;
+color: #000;
+border: 2px solid #000;
 }
-
-.filter-btn.active {
-  background: rgba(74, 144, 226, 0.6);
-  color: white;
+.filter-dropdown{
+font-family: inherit;
+border: 2px solid #ccc;
+padding: 6px 12px;
+border-radius: 20px;
+cursor: pointer;
+font-size: 14px;
 }
-
-.filter-dropdown {
-  flex: 0 0 auto;
-  min-width: 160px;
-  background: rgba(255, 255, 255, 0.4);
-  border: 1px solid rgba(137, 135, 135, 0.3);
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-family: yekan, Tahoma, Arial;
-  font-size: 16px !important;
+#checkbox-hamberger{
+display: none;
 }
-
 #background-img{
-  background: url(../image/13_mashhad_360.jpg);
-  height: 100vh;
-  width: 100%;
-  position: relative;
-  background-size: cover;
-  background-position: bottom;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+background: url(../image/13_mashhad_360.jpg);
+height: 100vh;
+width: 100%;
+position: relative;
+background-size: cover;
+background-position: bottom;
+display: flex;
+align-items: center;
+justify-content: center;
 }
-
 .search{
-  margin-right: 0rem;
+margin-right: 0rem;
 }
-
 .guide{
   display: flex;
   flex-direction: column;
@@ -178,64 +161,61 @@ header {
   background-color: #cecece;
   height: 100vh;
 }
-
 .guide-link{
-  color: #000;
+color: #000;
 }
-
 a{
-  text-decoration: none;
+text-decoration: none;
 }
-
 @media only screen and (width < 300px){
-  header{
-    width: 100%;
-    height: fit-content;
-    display: flex;
-    align-items: center;
-  }  
+header{
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+}  
 }
-
 @media only screen and (width >= 1000px){
-  .container-header-mobile{
+.container-header-mobile{
     display: none;
-  }
-  .logo-desktop{
-    display: flex;
-  }
-  .navbar-desktop{
-    margin: 17px 30px 0;
-  }
-  .logo-desktop p {
-    font-family: yekan;
-    font-weight: bold;
-    font-size: 20px;
-  }
-  .logo-desktop img {
-    width: 30%;
-    height: 50%;
-  }
-  .container-header-desktop{
-    display: flex;
-    justify-content: space-evenly;
-    flex-basis: 100%;
-    position: fixed;
-    top: 0;
-    z-index: 401;
-    background-color: white;
-    width: 100%;
-  }
-  .search{
-    margin-right: 10rem;
-  }
-  .guide{
-    flex-direction: row;
-  }
-  #filters{
-    top: 6rem;
-  }
 }
+.logo-desktop{
+  display: flex;
+}
+.navbar-desktop{
+  margin: 17px 30px 0;
+}
+.logo-desktop p {
+  font-family: yekan;
+  font-weight: bold;
+  font-size: 20px;
+}
+.logo-desktop img {
+  width: 30%;
+  height: 50%;
+}
+.container-header-desktop{
+  display: flex;
+  justify-content: space-evenly;
+  flex-basis: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 401;
+  background-color: white;
+  width: 100%;
 
+}
+.search{
+  margin-right: 10rem;
+}
+.guide{
+  flex-direction: row;
+
+}
+#filters{
+  top: 6rem;
+}
+}
 nav a {
   line-height: 50px;
   height: 100%;
@@ -250,7 +230,6 @@ nav a {
   color: rgb(0, 0, 0);
   cursor: pointer;
 }
-
 nav .animation {
   position: absolute;
   height: 100%;
@@ -259,56 +238,47 @@ nav .animation {
   transition: all .5s ease 0s;
   border-radius: 8px;
 }
-
 a:nth-child(1) {
   width: 80px;
 }
-
 a:nth-child(2) {
   width: 150px;
 }
-
 a:nth-child(3) {
   width: 140px;
 }
-
 a:nth-child(4) {
   width: 90px;
 }
-
 a:nth-child(5) {
   width: 90px;
 }
-
 nav .start-home, a:nth-child(1):hover~.animation {
   width: 80px;
   right: 0;
   background-color: #cecece;
 }
-
 nav .start-about, a:nth-child(2):hover~.animation {
   width: 140px;
   right: 85px;
   background-color: #cecece;
 }
-
 nav .start-blog, a:nth-child(3):hover~.animation {
   width: 140px;
   right: 230px;
   background-color: #cecece;
 }
-
 nav .start-portefolio, a:nth-child(4):hover~.animation {
   width: 75px;
   right: 377px;
   background-color: #cecece;
 }
-
 nav .start-contact, a:nth-child(5):hover~.animation {
   width: 90px;
   right: 462px;
   background-color: #cecece;
 }
+
 
 .link-start{
   text-align: center;
@@ -316,971 +286,33 @@ nav .start-contact, a:nth-child(5):hover~.animation {
   text-decoration: none;
   color: #000;
 }
-
 .start{
-  background-color: #cecece;
-  border: none;
-  border-radius: 10px;
-  padding: 6px 12px;
+background-color: #cecece;
+border: none;
+border-radius: 10px;
+padding: 6px 12px;
 }
-
 .options{
-  text-align: center;
+text-align: center;
 }
-
 section{
   width: 100%;
   height: 100vh;
   align-items: center;
 }
-
+.container-map{
+position: relative;
+}
 /* استایل نقشه */
 #map {
-  width: 100%;
-  height: 100vh;
-  background-color: #cecece;
-}
-
-/* ظاهر کلی select2 برای هماهنگی با دکمه‌های فیلتر */
-.select2-container--default .select2-selection--single {
-  background: rgba(255, 255, 255, 0.4) !important;
-  border: 1px solid rgba(137, 135, 135, 0.3) !important;
-  border-radius: 20px !important;
-  padding: 8px 16px !important;
-  height: 41px !important;
-  font-size: 16px !important;
-  font-family: yekan, Tahoma, Arial !important;
-  min-width: 160px !important;
-}
-
-/* متن انتخاب‌شده */
-.select2-container--default .select2-selection--single .select2-selection__rendered {
-  font-size: 16px;
-  font-family: yekan, Tahoma, Arial;
-  padding-right: 0;
-  color: #000;
-  line-height: normal;
-  text-align: right;
-}
-
-.select2-container--default .select2-selection--single .select2-selection__clear {
-  font-size: 20px;
-  color: #666;
-  margin-left: 10px;
-  padding: 0 5px;
-  cursor: pointer;
-  float: left;
-  font-weight: bold;
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.select2-container--default .select2-selection--single .select2-selection__clear:hover {
-  color: #333;
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 4px;
-}
-
-/* آیکن فلش */
-.select2-container--default .select2-selection--single .select2-selection__arrow {
-  height: 41px !important;
-  right: 10px;
-}
-
-/* منوی گزینه‌ها */
-.select2-dropdown {
-  border-radius: 10px;
-  direction: rtl;
-  font-family: yekan, Tahoma, Arial;
-  font-size: 15px;
-  border: 1px solid rgba(137, 135, 135, 0.3);
-  background: rgba(255, 255, 255, 0.95);
-}
-
-/* گزینه‌های لیست */
-.select2-results__option {
-  text-align: right;
-  padding: 8px 16px;
-  font-family: yekan, Tahoma, Arial;
-  font-size: 16px !important;
-}
-
-/* گزینه هایلایت‌شده */
-.select2-results__option--highlighted {
-  background: rgba(74, 144, 226, 0.6);
-  color: white;
-}
-
-#filters {
-  position: fixed;
-  top: 60px;
-  right: 10px;
-  left: 10px;
-  padding: 12px;
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  z-index: 1000;
-  flex-wrap: nowrap;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(1px);
-  -webkit-backdrop-filter: blur(1px);
-  border-radius: 8px;
-  overflow-x: auto;
-}
-
-#filters::-webkit-scrollbar {
-  display: none;
-}
-
-#courseSelect {
-  min-width: 200px;
-}
-
-@media only screen and (max-width: 768px) {
-  #filters {
-    position: fixed;
-    bottom: 0;
-    top: auto;
-    left: 0;
-    right: 0;
-    border-radius: 0;
-    background: rgba(255, 255, 255, 0.02);
-    backdrop-filter: blur(0.5px);
-    -webkit-backdrop-filter: blur(0.5px);
-  }
-
-  .filter-btn {
-    font-size: 15px;
-  }
-
-  .filter-dropdown {
-    min-width: 140px !important;
-    padding: 4px 12px !important;
-    height: 34px !important;
-    font-size: 15px !important;
-  }
-
-  #courseSelect {
-    min-width: 250px;
-  }
-
-  .credits-btn {
-    bottom: 120px;
-    font-size: 15px;
-    padding: 6px 12px;
-  }
-  
-  .copyright {
-    bottom: 65px;
-    font-size: 11px;
-    padding: 1px 8px;
-    width: auto;
-    text-align: right;
-    right: 0;
-    background: rgba(255, 255, 255, 0.7);
-    line-height: 1;
-    font-weight: 300;
-    white-space: nowrap;
-    max-width: 100%;
-  }
-
-  .modal-content {
-    padding: 15px;
-    max-width: 300px;
-  }
-
-  .modal h3 {
-    font-size: 18px;
-    margin-bottom: 12px;
-  }
-
-  .modal p {
-    font-size: 16px;
-    margin: 8px 0;
-  }
-
-  .modal .school-name {
-    font-size: 17px;
-    margin-top: 15px;
-  }
-
-  .close-modal {
-    width: 25px;
-    height: 25px;
-    font-size: 20px;
-  }
-
-  .select2-container--default .select2-selection--single {
-    min-width: 140px !important;
-    height: 34px !important;
-    padding: 4px 12px !important;
-    font-size: 15px !important;
-  }
-
-  .select2-container--default .select2-selection--single .select2-selection__rendered {
-    font-size: 15px;
-    line-height: 24px !important;
-  }
-
-  .select2-container--default .select2-selection--single .select2-selection__arrow {
-    height: 32px !important;
-  }
-
-  .select2-results__option {
-    padding: 6px 12px !important;
-    font-size: 15px !important;
-  }
-}
-
-#zoneSelect {
-  font-family: yekan, Tahoma, Arial;
-  font-size: 15px;
-}
-
-#zoneSelect option {
-  font-family: yekan, Tahoma, Arial;
-  font-size: 15px;
-  padding: 8px;
-}
-
-@media only screen and (max-width: 768px) {
-  #zoneSelect, #zoneSelect option {
-    font-size: 14px;
-  }
-}
-
-.credits-btn {
-  position: fixed;
-  right: 10px;
-  bottom: 80px;
-  padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 20px;
-  cursor: pointer;
-  font-family: yekan, Tahoma, Arial;
-  font-size: 16px;
-  z-index: 1000;
-  transition: background-color 0.3s;
-}
-
-.credits-btn:hover {
-  background: rgba(255, 255, 255, 0.9);
-}
-
-.copyright {
-  position: fixed;
-  right: 10px;
-  bottom: 10px;
-  padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 20px;
-  font-family: yekan, Tahoma, Arial;
-  font-size: 12px;
-  color: #666;
-  z-index: 1000;
-  display: block;
-  line-height: 1.5;
-  text-align: right;
-}
-
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 2000;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 25px;
-  border-radius: 15px;
-  position: relative;
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
-  font-family: yekan, Tahoma, Arial;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.modal h3 {
-  margin-bottom: 20px;
-  color: #333;
-  font-size: 22px;
-  font-weight: bold;
-}
-
-.modal p {
-  margin: 12px 0;
-  font-size: 18px;
-  color: #666;
-  line-height: 1.5;
-}
-
-.modal .school-name {
-  margin-top: 25px;
-  font-weight: bold;
-  color: #333;
-  font-size: 20px;
-}
-
-.close-modal {
-  position: absolute;
-  left: 15px;
-  top: 15px;
-  font-size: 24px;
-  cursor: pointer;
-  color: #999;
-  transition: color 0.3s;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-}
-
-.close-modal:hover {
-  color: #666;
-  background: rgba(0, 0, 0, 0.05);
-}
-
-@media only screen and (max-width: 768px) {
-  .credits-btn {
-    bottom: 120px;
-    font-size: 15px;
-    padding: 6px 12px;
-  }
-  
-  .copyright {
-    bottom: 65px;
-    font-size: 11px;
-    line-height: 1.4;
-  }
-}
-
-/* استایل برای نام نواحی روی نقشه */
-.zone-label {
-  font-size: 16px;
-  font-family: yekan, Tahoma, Arial;
-  font-weight: 700;
-  color: #333;
-  text-align: center;
-  padding: 2px 4px;
-  white-space: nowrap;
-}
-
-.zone-popup .leaflet-popup-content-wrapper {
-  background-color: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.zone-popup .leaflet-popup-tip {
-  background-color: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.zone-popup .leaflet-popup-content {
-  margin: 4px 8px;
-  text-align: center;
-}
-
-@media only screen and (max-width: 768px) {
-  .zone-label {
-    font-size: 15px;
-    padding: 1px 3px;
-  }
-}
-
-/* کنترل سایز فونت */
-.font-size-control {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-right: auto;
-  margin-left: 15px;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 4px 12px;
-  border-radius: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.font-size-label {
-  font-size: 14px;
-  color: #666;
-  white-space: nowrap;
-}
-
-.font-size-buttons {
-  display: flex;
-  gap: 5px;
-}
-
-.font-btn {
-  background: transparent;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 6px;
-  width: 32px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: #333;
-  transition: all 0.2s ease;
-  position: relative;
-}
-
-.font-btn:first-child .font-icon {
-  font-size: 14px;
-}
-
-.font-btn:last-child .font-icon {
-  font-size: 18px;
-}
-
-.font-btn:hover {
-  background: rgba(74, 144, 226, 0.1);
-  border-color: rgba(74, 144, 226, 0.3);
-}
-
-.font-btn:active {
-  transform: scale(0.95);
-}
-
-.font-btn[disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.font-btn[disabled]:hover {
-  background: transparent;
-  border-color: rgba(0, 0, 0, 0.1);
-}
-
-/* تنظیمات موبایل */
-@media only screen and (max-width: 768px) {
-  .font-size-control {
-    position: static;
-    margin-right: auto;
-    margin-left: 10px;
-    padding: 2px 6px;
-    background: transparent;
-    border: none;
-    z-index: 1000;
-  }
-
-  .font-size-label {
-    display: none;
-  }
-
-  .font-btn {
-    width: 24px;
-    height: 24px;
-    background: rgba(255, 255, 255, 0.4);
-  }
-
-  .font-btn:first-child .font-icon {
-    font-size: 12px;
-  }
-
-  .font-btn:last-child .font-icon {
-    font-size: 16px;
-  }
-
-  .font-size-buttons {
-    gap: 3px;
-  }
-
-  /* استایل‌های Select2 برای موبایل */
-  .select2-container {
-    min-width: auto !important;
-    width: auto !important;
-  }
-
-  .select2-container--default .select2-selection--single {
-    height: 34px !important;
-    padding: 4px 12px !important;
-    font-size: 15px !important;
-    background: rgba(255, 255, 255, 0.4) !important;
-    border: 1px solid rgba(137, 135, 135, 0.3) !important;
-  }
-
-  .select2-container--default .select2-selection--single .select2-selection__rendered {
-    font-size: 15px;
-    line-height: 24px !important;
-    padding-left: 20px !important;
-  }
-
-  .select2-container--default .select2-selection--single .select2-selection__clear {
-    font-size: 22px;
-    padding: 0 8px;
-    margin-left: 5px;
-    height: 34px;
-  }
-
-  .select2-container--default .select2-selection--single .select2-selection__arrow {
-    height: 32px !important;
-  }
-
-  .select2-dropdown {
-    border: 1px solid rgba(137, 135, 135, 0.3) !important;
-    background: rgba(255, 255, 255, 0.95) !important;
-  }
-
-  .select2-results__option {
-    padding: 6px 12px !important;
-    font-size: 15px !important;
-  }
-
-  .select2-container--default .select2-results__option--highlighted[aria-selected] {
-    background: rgba(74, 144, 226, 0.6) !important;
-    color: white !important;
-  }
-
-  #courseSelect {
-    min-width: auto !important;
-  }
-}
-
-.school-card {
-    background: white;
-    border-radius: 10px;
-    padding: 12px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: 1px solid #eee;
-}
-
-.school-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.school-card.active {
-    border-color: #4A90E2;
-    background-color: #f8f9ff;
-}
-
-.school-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.school-name {
-    font-size: 14px;
-    color: #333;
-    font-weight: bold;
-}
-
-.school-distance {
-    font-size: 12px;
-    color: #666;
-    direction: ltr;
-}
-
-.school-details {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid #eee;
-    font-size: 13px;
-    color: #666;
-}
-
-.school-type {
-    margin-bottom: 5px;
-}
-
-.school-address {
-    margin-bottom: 10px;
-    font-size: 12px;
-    color: #888;
-}
-
-.show-route-btn {
-    width: 100%;
-    padding: 8px;
-    background: #4A90E2;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-family: yekan, Tahoma, Arial;
-    transition: all 0.3s ease;
-}
-
-.show-route-btn:hover {
-    background: #357abd;
-}
-
-.schools-list {
-    max-height: 400px;
-    overflow-y: auto;
-    padding: 10px;
-}
-
-.schools-list::-webkit-scrollbar {
-    width: 6px;
-}
-
-.schools-list::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 3px;
-}
-
-.schools-list::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 3px;
-}
-
-.schools-list::-webkit-scrollbar-thumb:hover {
-    background: #666;
-}
-
-.nearby-schools {
-    position: fixed;
-    top: 80px;
-    right: 20px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    width: 380px;
-    max-height: calc(100vh - 280px);
-    overflow-y: auto;
-    z-index: 1000;
-    opacity: 1;
-    transform: translateY(0);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.nearby-schools-header {
-    padding: 16px;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    background: white;
-    z-index: 2;
-}
-
-.nearby-schools-header h3 {
-    margin: 0;
-    font-size: 16px;
-    color: #333;
-}
-
-.close-nearby {
-    background: none;
-    border: none;
-    font-size: 20px;
-    color: #666;
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 4px;
-    transition: background-color 0.2s;
-}
-
-.close-nearby:hover {
-    background-color: #f0f0f0;
-    color: #333;
-}
-
-.schools-list {
-    padding: 15px;
-}
-
-.school-card {
-    background: #f8f9fa;
-    border-radius: 8px;
-    margin-bottom: 12px;
-    padding: 15px 18px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.school-card:hover {
-    background: #f0f2f5;
-    transform: translateY(-1px);
-}
-
-.school-card.active {
-    background: #e7f0ff;
-    border: 1px solid #4A90E2;
-}
-
-.school-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-}
-
-.school-name {
-    font-size: 15px;
-    color: #333;
-    flex: 1;
-}
-
-.school-distance {
-    font-size: 14px;
-    color: #666;
-    white-space: nowrap;
-    margin-right: 10px;
-}
-
-/* Scrollbar styling */
-.nearby-schools::-webkit-scrollbar {
-    width: 6px;
-}
-
-.nearby-schools::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-.nearby-schools::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 3px;
-}
-
-.nearby-schools::-webkit-scrollbar-thumb:hover {
-    background: #999;
-}
-
-/* Selected location marker styles */
-.selected-location-marker {
-    width: 20px;
-    height: 20px;
-    background: #4A90E2;
-    border: 3px solid white;
-    border-radius: 50%;
-    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.4);
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(74, 144, 226, 0.4);
-    }
-    70% {
-        box-shadow: 0 0 0 10px rgba(74, 144, 226, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(74, 144, 226, 0);
-    }
-}
-
-@media only screen and (max-width: 768px) {
-    .nearby-schools {
-        right: 5px;
-        left: 5px;
-        top: 50px;
-        max-width: none;
-    }
-}
-
-.user-location-marker {
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    50% {
-        transform: scale(1.2);
-        opacity: 0.8;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-.range-circle {
-    stroke-dasharray: 10, 10;
-    animation: dash 20s linear infinite;
-}
-
-@keyframes dash {
-    to {
-        stroke-dashoffset: -1000;
-    }
-}
-
-.location-buttons {
-    position: fixed;
-    right: 10px;
-    bottom: 160px;
-    display: none;
-    gap: 10px;
-    z-index: 1000;
-}
-
-.location-buttons.active {
-    display: flex;
-}
-
-.confirm-location-btn,
-.cancel-location-btn {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 20px;
-    font-family: yekan, Tahoma, Arial;
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    transition: all 0.3s ease;
-}
-
-.confirm-location-btn {
-    background: #4CAF50;
-    color: white;
-}
-
-.cancel-location-btn {
-    background: #f44336;
-    color: white;
-}
-
-.confirm-location-btn:hover,
-.cancel-location-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-.help-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(255, 255, 255, 0.95);
-    padding: 15px 25px;
-    border-radius: 20px;
-    font-family: yekan, Tahoma, Arial;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    z-index: 2000;
-    animation: fadeInOut 3s forwards;
-}
-
-@keyframes fadeInOut {
-    0% { opacity: 0; }
-    10% { opacity: 1; }
-    80% { opacity: 1; }
-    100% { opacity: 0; }
-}
-
-@media only screen and (max-width: 768px) {
-    .location-buttons {
-        right: 5px;
-        bottom: 140px;
-    }
-    
-    .confirm-location-btn,
-    .cancel-location-btn {
-        font-size: 14px;
-        padding: 6px 12px;
-    }
-}
-
-.font-size-control .map-zoom-label {
-    margin-right: 20px;
-}
-
-/* Hide default map zoom controls */
-.leaflet-control-zoom {
-    display: none !important;
-}
-
-.close-school-btn {
-    width: 24px;
-    height: 24px;
-    border-radius: 12px;
-    border: none;
-    background: #f5f5f5;
-    color: #666;
-    font-size: 18px;
-    line-height: 1;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 8px;
-    transition: all 0.3s ease;
-}
-
-.close-school-btn:hover {
-    background: #ff4444;
-    color: white;
-    transform: scale(1.1);
-}
-
-.school-card {
-    transition: all 0.3s ease;
-}
-
-.school-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.school-name {
-    flex: 1;
-    margin-left: 8px;
-}
-
-.popup {
-    font-family: Vazirmatn;
-    font-size: calc(14px * var(--font-scale));
-    line-height: 1.5;
-    direction: rtl;
-    text-align: right;
-    padding: 5px;
-}
-
-.multiple-schools-popup {
-    font-size: calc(12px * var(--font-scale));
-    line-height: 1.4;
-}
-
-.multiple-schools-popup b {
-    font-size: calc(13px * var(--font-scale)) !important;
-}
-
-.popup hr {
-    margin: 8px 0;
-    border: 0;
-    border-top: 1px solid #ddd;
-}
-
-.popup .school-entry {
-    margin-bottom: 10px;
-}
-
-.popup .school-entry:last-child {
-    margin-bottom: 0;
-}
-
-@media (max-width: 768px) {
-    .multiple-schools-popup {
-        font-size: calc(11px * var(--font-scale));
-    }
-    
-    .multiple-schools-popup b {
-        font-size: calc(12px * var(--font-scale)) !important;
-    }
+width: 100%;
+height: 100vh;
+background-color: #cecece;
+}
+
+/* فیلترها (پنهان به‌صورت پیش‌فرض) */
+.filter-btn.active {
+background-color: #000;
+color: #fff;
+border-color: #000;
 }
