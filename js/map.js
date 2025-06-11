@@ -12,16 +12,45 @@ document.addEventListener("DOMContentLoaded", function () {
         map.zoomOut(1);
     });
 
+    // Add birds eye view button functionality
+    document.getElementById('birds-eye-view').addEventListener('click', function() {
+        // Get current center of the map
+        const currentCenter = map.getCenter();
+        const currentZoom = map.getZoom();
+        
+        if (activeFilters.selectedZone) {
+            // If a zone is selected, zoom out while keeping the current center
+            const selectedPolygon = zonePolygons[activeFilters.selectedZone];
+            if (selectedPolygon) {
+                const bounds = selectedPolygon.getBounds();
+                const isMobileView = window.innerWidth <= 768;
+                const padding = isMobileView ? [20, 20] : [50, 50];
+                
+                // First ensure we're centered on the current view
+                map.setView(currentCenter, currentZoom, { animate: false });
+                
+                // Then zoom out to show the entire zone
+                map.fitBounds(bounds, {
+                    padding: padding,
+                    maxZoom: isMobileView ? 13 : 14,
+                    animate: true,
+                    duration: 1
+                });
+            }
+        } else {
+            // If no zone is selected, zoom out while keeping the current center
+            // First ensure we're centered on the current position
+            map.setView(currentCenter, currentZoom, { animate: false });
+            // Then zoom out to a wider view
+            map.setZoom(13, { animate: true, duration: 1 });
+        }
+    });
+
     // Clear search input on page load
     const searchInput = document.getElementById("searchInput");
     if (searchInput) {
         searchInput.value = "";
     }
-
-    // Reset map view when popup is closed
-    map.on('popupclose', function() {
-        map.setView([36.2977, 59.6057], 13); // Reset to Mashhad view
-    });
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '&copy; OpenStreetMap contributors'
@@ -97,45 +126,87 @@ document.addEventListener("DOMContentLoaded", function () {
         const isMobile = window.innerWidth <= 768;
         const iconSize = isMobile ? [50, 50] : [70, 70];
     
+        // Group schools by location
+        const schoolsByLocation = {};
+        
+        // First, group all schools by location (before filtering)
+        allSchools.forEach(school => {
+            const lat = parseFloat(school.latitude);
+            const lng = parseFloat(school.longitude);
+            if (isNaN(lat) || isNaN(lng)) return;
+            
+            const locationKey = `${lat},${lng}`;
+            if (!schoolsByLocation[locationKey]) {
+                schoolsByLocation[locationKey] = {
+                    filtered: [],
+                    all: []
+                };
+            }
+            schoolsByLocation[locationKey].all.push(school);
+        });
+
+        // Then add filtered schools to their respective locations
         filteredSchools.forEach(school => {
             const lat = parseFloat(school.latitude);
             const lng = parseFloat(school.longitude);
             if (isNaN(lat) || isNaN(lng)) return;
+            
+            const locationKey = `${lat},${lng}`;
+            if (schoolsByLocation[locationKey]) {
+                schoolsByLocation[locationKey].filtered.push(school);
+            }
+        });
     
-            const districtId = school.district;
+        // Add markers for each location
+        Object.entries(schoolsByLocation).forEach(([locationKey, schools]) => {
+            const [lat, lng] = locationKey.split(',').map(Number);
+            
+            // Skip if no schools at this location match any criteria
+            if (schools.filtered.length === 0) return;
+            
+            const firstSchool = schools.filtered[0];
+            const districtId = firstSchool.district;
     
             const icon = L.icon({
-                iconUrl: `image/${districtId}-${school.gender_specific_code}.svg`,
+                iconUrl: `image/${districtId}-${firstSchool.gender_specific_code}.svg`,
                 iconSize: iconSize
             });
     
-            const courseCodes = Array.isArray(school.cources)
-                ? school.cources
-                : typeof school.cources === "string"
-                ? school.cources.split(",")
-                : [];
-    
-            const courseNames = courseCodes
-                .map(code => code.trim())
-                .filter(code => code)
-                .map(code => courseMap[code] || code)
-                .join("، ");
-    
-            const popup = `
-                <div class="popup">
-                    هنرستان <b style="color: #33358a;">${school.school_name}</b> - ${school.districtN || ""}<br>
-                    ${school.technical_or_vocational}، ${school.gender_specific}، ${school.public_or_private}<br>
-                    <b>رشته‌های فعال: </b>${courseNames}<br>
-                    <b>نشانی: </b>${school.address || ""}<br>
-                    <b>تلفن: </b>${toPersianNum(school.tel) || ""}
+            // Create popup content for schools at this location
+            const popupContent = `
+                <div class="popup ${schools.filtered.length > 1 ? 'multiple-schools-popup' : ''}">
+                    ${schools.filtered.map(school => {
+                        const courseCodes = Array.isArray(school.cources)
+                            ? school.cources
+                            : typeof school.cources === "string"
+                            ? school.cources.split(",")
+                            : [];
+                    
+                        const courseNames = courseCodes
+                            .map(code => code.trim())
+                            .filter(code => code)
+                            .map(code => courseMap[code] || code)
+                            .join("، ");
+                    
+                        return `
+                            <div class="school-entry">
+                                هنرستان <b style="color: #33358a;">${school.school_name}</b> - ${school.districtN || ""}<br>
+                                ${school.technical_or_vocational}، ${school.gender_specific}، ${school.public_or_private}<br>
+                                <b>رشته‌های فعال: </b>${courseNames}<br>
+                                <b>نشانی: </b>${school.address || ""}<br>
+                                <b>تلفن: </b>${toPersianNum(school.tel) || ""}
+                            </div>
+                            ${schools.filtered.length > 1 ? '<hr>' : ''}
+                        `;
+                    }).join('')}
                 </div>
             `;
     
             const marker = L.marker([lat, lng], { icon })
                 .addTo(map)
-                .bindPopup(popup)
+                .bindPopup(popupContent)
                 .on('click', function() {
-                    highlightZone(school.district);
+                    highlightZone(firstSchool.district);
                     // در موبایل، زوم کمتری انجام می‌دهیم
                     const zoomLevel = isMobile ? 15 : 17;
                     map.setView([lat, lng], zoomLevel);
@@ -144,7 +215,6 @@ document.addEventListener("DOMContentLoaded", function () {
             markers.push(marker);
         });
     }
-    
 
     function fuzzyMatch(text, keyword) {
         if (!text || !keyword) return false;
@@ -885,150 +955,6 @@ $('#courseSelect').on('change', function () {
         nearbySchools.classList.add('active');
     }
 
-    let locationMarker = null;
-    let selectedLocation = null;
-    let isSelectingLocation = false;
-
-    document.getElementById('nearby-btn').addEventListener('click', function() {
-        if (!isSelectingLocation) {
-            // بستن تمام پاپ‌آپ‌های موجود
-            map.closePopup();
-            
-            // فعال کردن حالت انتخاب مکان
-            isSelectingLocation = true;
-            this.classList.add('active');
-            this.textContent = 'لغو انتخاب موقعیت';
-            map.getContainer().style.cursor = 'crosshair';
-
-            // غیرفعال کردن موقت رویدادهای نواحی
-            Object.values(zonePolygons).forEach(polygon => {
-                polygon.off('mouseover');
-                polygon.off('mouseout');
-                polygon.off('click');
-                polygon.unbindPopup();
-            });
-
-            // نمایش راهنما به صورت پاپ‌آپ
-            const helpPopup = document.createElement('div');
-            helpPopup.className = 'help-popup';
-            helpPopup.innerHTML = 'برای انتخاب موقعیت روی نقشه کلیک کنید';
-            document.body.appendChild(helpPopup);
-
-            // حذف پاپ‌آپ راهنما بعد از 3 ثانیه
-            setTimeout(() => {
-                if (helpPopup.parentNode) {
-                    helpPopup.parentNode.removeChild(helpPopup);
-                }
-            }, 3000);
-
-            function handleLocationSelect(e) {
-                const latlng = e.latlng;
-                
-                // حذف مارکر و دایره قبلی
-                if (locationMarker) {
-                    map.removeLayer(locationMarker);
-                }
-                if (selectedLocation) {
-                    map.removeLayer(selectedLocation);
-                }
-                
-                // ایجاد مارکر جدید
-                locationMarker = L.marker(latlng, {
-                    draggable: true,
-                    icon: L.divIcon({
-                        className: 'selected-location-marker',
-                        html: '',
-                        iconSize: [20, 20],
-                        iconAnchor: [10, 10]
-                    })
-                }).addTo(map);
-                
-                // ایجاد دایره محدوده با شعاع 3 کیلومتر
-                selectedLocation = L.circle(latlng, {
-                    radius: 3000,
-                    color: '#4A90E2',
-                    fillColor: '#4A90E2',
-                    fillOpacity: 0.1,
-                    weight: 2,
-                    className: 'range-circle'
-                }).addTo(map);
-
-                // به‌روزرسانی موقعیت دایره با جابجایی مارکر
-                locationMarker.on('drag', function(e) {
-                    selectedLocation.setLatLng(e.target.getLatLng());
-                });
-
-                // تنظیم نمای نقشه با زوم ملایم
-                const bounds = selectedLocation.getBounds();
-                map.fitBounds(bounds, {
-                    padding: [50, 50],
-                    maxZoom: 15,
-                    animate: true,
-                    duration: 0.5
-                });
-
-                // نمایش دکمه‌های تایید و لغو
-                document.getElementById('location-buttons').classList.add('active');
-            }
-
-            // اضافه کردن رویداد کلیک به نقشه
-            map.on('click', handleLocationSelect);
-
-            // تنظیم رویدادهای دکمه‌های تایید و لغو
-            document.getElementById('confirm-location-btn').addEventListener('click', function() {
-                if (locationMarker) {
-                    // بازگشت به حالت عادی
-                    isSelectingLocation = false;
-                    document.getElementById('nearby-btn').classList.remove('active');
-                    document.getElementById('nearby-btn').textContent = 'هنرستان‌های نزدیک';
-                    map.getContainer().style.cursor = '';
-                    
-                    // حذف رویدادهای کلیک
-                    map.off('click', handleLocationSelect);
-                    
-                    // پنهان کردن دکمه‌های تایید و لغو
-                    document.getElementById('location-buttons').classList.remove('active');
-                    
-                    // فعال‌سازی مجدد رویدادهای نواحی
-                    initializeZoneEvents();
-                    
-                    // جستجوی هنرستان‌های نزدیک
-                    findNearbySchools(locationMarker.getLatLng());
-                }
-            });
-
-            document.getElementById('cancel-location-btn').addEventListener('click', function() {
-                // بازگشت به حالت عادی
-                isSelectingLocation = false;
-                document.getElementById('nearby-btn').classList.remove('active');
-                document.getElementById('nearby-btn').textContent = 'هنرستان‌های نزدیک';
-                map.getContainer().style.cursor = '';
-                
-                // حذف رویدادهای کلیک
-                map.off('click', handleLocationSelect);
-                
-                // پنهان کردن دکمه‌های تایید و لغو
-                document.getElementById('location-buttons').classList.remove('active');
-                
-                // حذف مارکر و دایره
-                if (locationMarker) {
-                    map.removeLayer(locationMarker);
-                    locationMarker = null;
-                }
-                if (selectedLocation) {
-                    map.removeLayer(selectedLocation);
-                    selectedLocation = null;
-                }
-                
-                // فعال‌سازی مجدد رویدادهای نواحی
-                initializeZoneEvents();
-            });
-        } else {
-            // لغو حالت انتخاب مکان
-            document.getElementById('cancel-location-btn').click();
-        }
-    });
-
     function initializeZoneEvents() {
         Object.values(zonePolygons).forEach(polygon => {
             polygon.on('mouseover', function(e) {
@@ -1049,165 +975,9 @@ $('#courseSelect').on('change', function () {
 
     let currentRoute = null;
 
-    function findNearbySchools(latlng) {
-        const nearbySchools = [];
-        
-        // Check each marker for distance and school properties
-        markers.forEach(marker => {
-            const distance = marker.getLatLng().distanceTo(latlng);
-            if (distance <= 3000) { // Within 3km
-                const school = allSchools.find(s => 
-                    parseFloat(s.latitude) === marker.getLatLng().lat && 
-                    parseFloat(s.longitude) === marker.getLatLng().lng
-                );
-                
-                if (school) {
-                    nearbySchools.push({
-                        ...school,
-                        distance: Math.round(distance),
-                        marker: marker
-                    });
-                }
-            }
-        });
-        
-        // Sort by distance
-        nearbySchools.sort((a, b) => a.distance - b.distance);
-        
-        // Show results in a popup
-        if (nearbySchools.length > 0) {
-            let content = '<div class="nearby-schools active">';
-            content += '<div class="nearby-schools-header">';
-            content += `<h3>هنرستان‌های نزدیک (${nearbySchools.length} مورد)</h3>`;
-            content += '<button class="close-nearby" title="بستن و پایان مسیریابی">×</button>';
-            content += '</div>';
-            
-            // Add schools list
-            content += '<div class="schools-list">';
-            nearbySchools.forEach((school, index) => {
-                const distanceKm = (school.distance / 1000).toFixed(1);
-                content += `
-                    <div class="school-card" data-school-index="${index}" data-lat="${school.latitude}" data-lng="${school.longitude}">
-                        <div class="school-info">
-                            <span class="school-name">${school.school_name}</span>
-                            <span class="school-distance">${distanceKm} کیلومتر</span>
-                        </div>
-                    </div>
-                `;
-            });
-            content += '</div></div>';
-            
-            // Remove existing nearby schools popup if any
-            const existingPopup = document.querySelector('.nearby-schools');
-            if (existingPopup) {
-                existingPopup.remove();
-            }
-            
-            // Add new popup
-            document.body.insertAdjacentHTML('beforeend', content);
-            
-            // Add close button event listener
-            document.querySelector('.close-nearby').addEventListener('click', function() {
-                const nearbySchools = document.querySelector('.nearby-schools');
-                nearbySchools.style.opacity = '0';
-                nearbySchools.style.transform = 'translateY(-20px)';
-                
-                setTimeout(() => {
-                    nearbySchools.remove();
-                    // Remove route if exists
-                    if (currentRoute) {
-                        map.removeLayer(currentRoute);
-                        currentRoute = null;
-                    }
-                    // Remove location marker
-                    if (locationMarker) {
-                        map.removeLayer(locationMarker);
-                        locationMarker = null;
-                    }
-                    // Remove range circle
-                    if (selectedLocation) {
-                        map.removeLayer(selectedLocation);
-                        selectedLocation = null;
-                    }
-                    // Reset map view
-                    map.setView([36.2977, 59.6057], 13);
-                }, 300);
-            });
-            
-            // Add click events to school cards
-            document.querySelectorAll('.school-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    const lat = parseFloat(this.dataset.lat);
-                    const lng = parseFloat(this.dataset.lng);
-                    const index = parseInt(this.dataset.schoolIndex);
-                    const school = nearbySchools[index];
-                    
-                    // Remove existing route if any
-                    if (currentRoute) {
-                        map.removeLayer(currentRoute);
-                    }
-                    
-                    // Calculate route
-                    const userLat = locationMarker.getLatLng().lat;
-                    const userLng = locationMarker.getLatLng().lng;
-                    
-                    fetch(`https://router.project-osrm.org/route/v1/driving/${userLng},${userLat};${lng},${lat}?overview=full&geometries=geojson`)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.routes && data.routes.length > 0) {
-                                // Draw route on map
-                                currentRoute = L.geoJSON(data.routes[0].geometry, {
-                                    style: {
-                                        color: '#4A90E2',
-                                        weight: 6,
-                                        opacity: 0.6
-                                    }
-                                }).addTo(map);
-                                
-                                // Fit map to show the entire route
-                                map.fitBounds(currentRoute.getBounds(), {
-                                    padding: [50, 50]
-                                });
-                            }
-                        });
-                    
-                    // Highlight active card
-                    document.querySelectorAll('.school-card').forEach(c => {
-                        c.classList.remove('active');
-                    });
-                    this.classList.add('active');
-                    
-                    // Open school popup
-                    school.marker.openPopup();
-                });
-            });
-        } else {
-            alert('هیچ هنرستانی در شعاع ۳ کیلومتری این نقطه یافت نشد.');
-        }
-    }
-
     // Add zoom controls to the header
     const zoomControl = L.control.zoom({
         position: 'topright'
     });
     map.addControl(zoomControl);
-
-    /*
-    // Add nearby schools button
-    const nearbySchoolsButton = L.control({ position: 'topright' });
-    nearbySchoolsButton.onAdd = function() {
-        const button = L.DomUtil.create('button', 'custom-map-button');
-        button.innerHTML = 'هنرستان‌های نزدیک';
-        button.onclick = function() {
-            if (locationMarker) {
-                const latlng = locationMarker.getLatLng();
-                findNearbySchools(latlng.lat, latlng.lng);
-            } else {
-                alert('لطفاً ابتدا موقعیت خود را روی نقشه مشخص کنید.');
-            }
-        };
-        return button;
-    };
-    nearbySchoolsButton.addTo(map);
-    */
 });
